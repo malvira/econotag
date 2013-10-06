@@ -1,0 +1,135 @@
+r1:
+----
+
+r7 = r8 = 33k
+c3 = 470p
+c1 = c2 = c3 = c4 0.1u
+c6 = c7 = 18p
+q3 = red
+q4 = green
+r11 = 220
+r12 = 120 (with cheap green LED)
+r9 = 56k
+r10 = 1k
+
+- consider putting usb connector on other side, or both sides so you
+  can populate it either way
+
+- change pwr input pins to accept screw terminal jacks. 
+
+- need to find j-wing version of these push buttons.
+
+- remove 3v3 traces that once went to a bypass cap off pins 14 and 9.
+ 
+- output of 3v3 reg needs more bypassing (10u is good, might be able
+  to do less)
+
+- USB input/ reg input could use more bypassing.
+
+- consider moving nSRST to make it compatible with an existing openocd
+  layout (nevermind axm0432_jtag seems to work)
+
+- XTAL_CNTL is making a difference: for the econotag something around
+  reg(XTAL_CNTL) = (0x1 << 25) | (0xf << 21) | ( 0x10 << 16) | (0x1F
+  << 8) | 0x52; seems best, although I really need a way to measure this. 
+
+  sma pig tail soldered to 1M to osc in work. Need to zoom way in
+  (center 24MHz, span 100kHz)
+
+  power up values puts it at 24.01037 MHz
+
+  reg(XTAL_CNTL) = 0x28E0F52; = 24.0044 MHz
+
+  reg(XTAL_CNTL) = (0x1 << 25) | (0xf << 21) | ( 0x10 << 16) | (0x1F << 8) | 0x52; = 24.00128 MHz
+
+  reg(XTAL_CNTL) = (0x1 << 25) | (0xf << 21) | ( 0x1f << 16) | (0x1F << 8) | 0x52; = 24.00085 MHz
+
+  unfortunately that's as high as the trim caps go. probably should
+  add a little capacitance on the board --- maybe just with a plane.
+
+  with 12pF and default power up values = 24.00352 MHz
+
+  12pf and reg(XTAL_CNTL) = (0x1 << 25) | (0x1 << 21) | ( 0x6 << 16) | (0x1F << 8) | 0x52;
+  = 24.00197 MHz
+
+  12 pf and reg(XTAL_CNTL) = (0x1 << 25) | (0x7 << 21) | ( 0x0 << 16) | (0x1F << 8) | 0x52;
+  = 24.00095 Mhz
+
+  12 pf and reg(XTAL_CNTL) = (0x1 << 25) | (0xf << 21) | ( 0xf << 16) | (0x1F << 8) | 0x52;
+  = 23.999375
+
+  12 pf and reg(XTAL_CNTL) = (0x1 << 25) | (0xb << 21) | ( 0xf << 16) | (0x1F << 8) | 0x52;
+  = 23.999885
+
+  12 pf and reg(XTAL_CNTL) = (0x1 << 25) | (0xb << 21) | ( 0x7 << 16) | (0x1F << 8) | 0x52;
+  = 24.000056
+  
+  12 pf and reg(XTAL_CNTL) = (0x1 << 25) | (0xb << 21) | ( 0xb << 16) | (0x1F << 8) | 0x52;
+  = 23.999963
+
+  12 pf and reg(XTAL_CNTL) = (0x1 << 25) | (0xb << 21) | ( 0x9 << 16) | (0x1F << 8) | 0x52;
+  = 24.000000 MHz
+
+- range without a matching network (L1 short) seems comparable to other boards.
+ 
+- need 12pf caps on main xtal
+
+- thinner cut traces and ground plane restrict
+
+- put top usage silk on JP10
+
+- blink-allio slaps the JTAG around --- this is more of a note rather than a todo item.
+
+- can't use UART bootloader in the same way: flow control hack doesn't
+  work because CTS on FT2232 uart isn't hooked up. Instead you need to
+  bitbang (either in software or with a pair of tweezers) RTS low, and
+  then toggle reset. 
+
+- maybe hookup the flow control???
+
+- flash reset jumpers?
+
+- JTAG jumpers at sleep current:
+
+  all connected: 81 uA
+
+  disconnected
+
+  srst: 81 uA
+  vref2h: 49 uA
+  vref2l: 81 uA
+  u1tx: 81 uA
+  u1rx: 81 uA
+  u1rts: 81 uA
+  tms: 49 uA
+  tck: 81 uA
+  tdi: 49 uA
+  tdo: 49 uA
+  rtck: 49 uA
+  
+  vref2h, tms, tdi, tdo, rtck: 49 uA
+
+  all pins: 49 uA
+
+- I can't get the sleep current below 49 uA (the same code does 2uA on
+  a r1 board). One thing to do is build another one, with less solder
+  on the bottom. 
+
+  - Another thing is to pull up all gnd pads of the
+  FT2232.
+     - that made no difference.
+
+
+On an new econotag, cutting all the jtag traces gets me to 1.6uA of
+sleep current... there must just be an assembly issue with that
+one. With 10M in series from the ft2232 to VREF2H I get sleep of
+2.1uA. I think that's what I'll do. That works.
+
+
+- Add a jumper that lets you power the regulator from high voltage but
+  not the ft2232.
+
+- at 5v0 input: sleep is 248uA.
+  at 15v0 input: sleep is 306uA.
+
+

@@ -1,0 +1,32 @@
+Material Type:		       FR4      
+Material Thickness:	       0.062"
+Number of Layers:	       2
+First Dimension:	       3.2"     
+Second Dimension:      	       1.8"
+Finish Plating:		       LFSOLDER
+First Array Dimension:         6.4"     
+Second Array Dimension:        8.2"   
+Array Up:    		       8
+Copper Outers:                 1oz      
+Copper Inners:		       0 oz
+Smallest Hole Size:            0.015"
+Top SMD Pads:                  2400     
+Bottom SMD Pads:	       0
+SMD Pitch:                     0.02"
+Solder Mask Sides:             Both     
+Solder Mask Type:	       LPI
+Solder Mask Color:             Green
+Silkscreen Sides:              Both     
+Silkscreen Color:	       White
+CNC Route Points:              4
+Trace width/Space:             0.006"   
+Tab Route:		       No
+Scoring:                       Yes
+Gold Fingers:                  None     
+Plated Slots:		       No
+Plated Edges:                  No
+Counter Sinks:                 No       
+Counter Bores:		       No
+Dielectric:                    No
+Impedance:                     No       
+ITAR:			       No

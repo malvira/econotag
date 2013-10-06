@@ -1,0 +1,10 @@
+<cad>
+  <part class="pcb" name="redbee-jtag">
+    <doc class="eagle-sch" name="schematic">
+      <data class="string" name="filename">econotag.sch</data>
+    </doc>
+    <doc class="bom" name="bom">
+      <data class="string" name="filename">econotag.csv</data>
+    </doc>
+  </part>
+</cad>
